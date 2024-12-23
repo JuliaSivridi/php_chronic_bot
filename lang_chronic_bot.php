@@ -13,9 +13,10 @@ $flags = ['en' => '🇬🇧', 'ru' => '🇷🇺'];
 $lang = ['en' => ['hi1' => 'Hello, ', 'hi2' => ' 😋', 
 	'main-back' => '⬅️ Main menu', 'main-ttl' => '🙂 Main menu', 
 	'menu-hlp' => 'ℹ️ Help', 'help' => "ℹ️ Send message to bot to create new daily chronic with current date and time. 
-\nTo create new daily chronic quickly - click *[Choose]* and select chronic from *[Chronic list]*. 
-\n*[Chronic list]* can be edited in *[Settings]*. 
-\nThe *[Result]* displays Chronicle of day. Bot immediately forgets them and you start from zero.", 
+	\nReply to chronic to add more info to it. You can reply multiple times.
+	\nTo create new daily chronic quickly - click *[Choose]* and select chronic from *[Chronic list]*. 
+	\n*[Chronic list]* can be edited in *[Settings]*. 
+	\nThe *[Result]* displays Chronicle of day. Bot immediately forgets them and you start from zero.", 
 	'menu-set' => '⚙️ Settings', 'set-back' => '⬅️ Settings menu', 'set-ttl' => '⚙️ Settings menu', 
 	'menu-lang' => '🔤 Language', 'lang-ask' => '🔤 Choose a language', 'lang-ok' => '✅ Language chosen', 
 	'menu-list' => '🔣 Chronic list', 'list-view' => '👀 View', 'list-ttl' => "🔣 Your's chronic list", 
@@ -29,9 +30,10 @@ $lang = ['en' => ['hi1' => 'Hello, ', 'hi2' => ' 😋',
 	'ru' => ['hi1' => 'Привет, ', 'hi2' => ' 😋', 
 	'main-back' => '⬅️ Главное меню', 'main-ttl' => '🙂 Главное меню', 
 	'menu-hlp' => 'ℹ️ Помощь', 'help' => "ℹ️ Отправьте сообщение боту для создания новой хроники дня с текущей датой-временем. 
-\nЧтобы создать новую хронику дня быстро - нажмите *[Выбрать]* и выберите хронику из *[Списка хроник]*. 
-\n*[Список хроник]* можно отредактировать в *[Настройках]*. 
-\nКнопка *[Результат]* выводит Хронику дня. Бот сразу их забывает и вы начинаете с нуля.", 
+	\nОтветьте на хронику, чтобы дополнить ее. Можно отвечать несколько раз.
+	\nЧтобы создать новую хронику дня быстро - нажмите *[Выбрать]* и выберите хронику из *[Списка хроник]*. 
+	\n*[Список хроник]* можно отредактировать в *[Настройках]*. 
+	\nКнопка *[Результат]* выводит Хронику дня. Бот сразу их забывает и вы начинаете с нуля.", 
 	'menu-set' => '⚙️ Настройки', 'set-back' => '⬅️ Меню настроек', 'set-ttl' => '⚙️ Меню настроек', 
 	'menu-lang' => '🔤 Язык', 'lang-ask' => '🔤 Выбери язык', 'lang-ok' => '✅ Язык выбран', 
 	'menu-list' => '🔣 Список хроник', 'list-view' => '👀 Просмотр', 'list-ttl' => '🔣 Ваш список хроник', 
