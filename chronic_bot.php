@@ -37,7 +37,7 @@ function update_data($dblink, $tbname, $chat_id, $field_name, $data) {
 // menu keyboard
 function draw_menu($lang_ul, $type) {
 	switch ($type) {
-		case 'main': return $kbd = [[$lang_ul['menu-chus'], $lang_ul['menu-res']], 
+		case 'main': return $kbd = [[$lang_ul['menu-chus'], $lang_ul['menu-view'], $lang_ul['menu-clear']], 
 									[$lang_ul['menu-set'], $lang_ul['menu-hlp']]]; break;
 		case  'set': return $kbd = [[$lang_ul['menu-list'], $lang_ul['menu-lang']], 
 									[$lang_ul['main-back']]]; break;
@@ -62,7 +62,6 @@ function draw_list($lang_ul, $user_list) {
 			$line = [];
 		}
 	} if (!empty($line)) $kbd[] = $line;
-	$kbd[] = [$lang_ul['main-back']];
 	return $kbd;
 }
 
@@ -74,8 +73,8 @@ $dblink = mysqli_connect($dbhost, $dbuser, $dbpswd, $dbname);
 // user send msg
 if (($input['message']) != null) {
 	$chat_id = $input['message']['chat']['id'];
-	$user_lang = $input['message']['from']['language_code'];
 	$msg_id = $input['message']['message_id'];
+	$user_lang = $input['message']['from']['language_code'];
 	$user_msg = trim($input['message']['text']);
 
 	$result_usr = select_user($dblink, $tbname, $chat_id);
@@ -165,23 +164,32 @@ if (($input['message']) != null) {
 
 			// main menu -> choose chronic
 			case $lang[$ul]['menu-chus']: {
+				$kbd = draw_list($lang[$ul], $user_list);
+				$kbd[] = [$lang[$ul]['main-back']];
 				$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $lang[$ul]['chus-ttl'], 
-					'reply_markup' => json_encode(['keyboard' => draw_list($lang[$ul], $user_list), 'resize_keyboard' => true])]);
+					'reply_markup' => json_encode(['keyboard' => $kbd, 'resize_keyboard' => true])]);
 				break;
 			}
 
-			// main menu -> show result
-			case $lang[$ul]['menu-res']: {
-				if (!empty($user_day)) {
-					$result = $lang[$ul]['res-ttl'].' '.date('d.m.Y', $user_day[0]->ctime);
+			// main menu -> view chronic
+			case $lang[$ul]['menu-view']: {
+				if (!empty($user_day)) { // chronics exist
+					$result = $lang[$ul]['view-ttl'].' '.date('d.m.Y', $user_day[0]->ctime);
 					foreach ($user_day as $chronic) {
 						$result .= "\n*".date('H:i', $chronic->ctime)."* ".$chronic->chronic;
 						if (!empty($chronic->comment)) $result .= ". ".$chronic->comment;
-					}
-				} else { $result = $lang[$ul]['res-ttl'].$lang[$ul]['res-empty']; }
+					} // chronic is empty
+				} else { $result = $lang[$ul]['view-ttl'].$lang[$ul]['chronic-empty']; }
 				$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $result, 'parse_mode' => 'Markdown', 
 					'reply_markup' => json_encode(['keyboard' => draw_menu($lang[$ul], 'main'), 'resize_keyboard' => true])]);
+				break;
+			}
+
+			// main menu -> clear chronic
+			case $lang[$ul]['menu-clear']: {
 				update_data($dblink, $tbname, $chat_id, 'user_day', []);
+				$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $lang[$ul]['clear-ttl'], 
+					'reply_markup' => json_encode(['keyboard' => draw_menu($lang[$ul], 'main'), 'resize_keyboard' => true])]);
 				break;
 			}
 
@@ -203,7 +211,7 @@ if (($input['message']) != null) {
 							update_data($dblink, $tbname, $chat_id, 'user_list', $user_list);
 							$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $lang[$ul]['chronic-deleted'], 
 								'reply_markup' => json_encode(['keyboard' => draw_menu($lang[$ul], 'list'), 'resize_keyboard' => true])]);
-						} else {
+						} else { // user wrote smth wrong
 							$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $lang[$ul]['chronic-notfound'], 
 								'reply_markup' => json_encode(['keyboard' => draw_menu($lang[$ul], 'list'), 'resize_keyboard' => true])]);
 						} update_data($dblink, $tbname, $chat_id, 'flag', null);
@@ -215,13 +223,13 @@ if (($input['message']) != null) {
 							$found_item = array_filter($user_day, function($chronic) use ($reply_id) {
 								return $chronic->msg_id === $reply_id;
 							});
-							if (!empty($found_item)) {
+							if (!empty($found_item)) { // found replayed message
 								$matched_object = reset($found_item);
 								$matched_object->comment = $matched_object->comment.$user_msg.' ';
 								update_data($dblink, $tbname, $chat_id, 'user_day', $user_day);
 								$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $lang[$ul]['comment-saved'], 
 									'reply_markup' => json_encode(['keyboard' => draw_menu($lang[$ul], 'main'), 'resize_keyboard' => true])]);
-							} else {
+							} else { // user replyed to smth else
 								$answer = trequest('sendMessage', ['chat_id' => $chat_id, 'text' => $lang[$ul]['chronic-notfound'], 
 									'reply_markup' => json_encode(['keyboard' => draw_menu($lang[$ul], 'main'), 'resize_keyboard' => true])]);
 							}
